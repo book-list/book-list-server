@@ -17,7 +17,7 @@ app.use(cors());
 app.get('/test', (req, res) => res.send('Testing 1, 2, 3'));
 
 app.get('/books', (req, res) => {
-  client.query(`SELECT DISTINCT book_id, author, isbn, image_url from books;`)
+  client.query(`SELECT book_id, author, isbn, image_url FROM books;`)
     .then(results => res.send(results.rows))
     .catch(console.error);
 });
