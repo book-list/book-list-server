@@ -7,9 +7,8 @@ const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT;
-const CLIENT_URL = 'https://book-list.github.io/book-list-client/';
 
-const client = new pg.Client('DATABASE_URL');
+const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 client.on('error', err => console.error(err));
 
@@ -21,7 +20,7 @@ app.get('/books', (req, res) => {
   client.query(`SELECT * from books;`)
     .then(results => res.send(results.rows))
     .catch(console.error);
-});
+}); 
 
 app.get('*', (req, res) => res.redirect(CLIENT_URL));
 
