@@ -14,11 +14,17 @@ client.on('error', err => console.error(err));
 
 app.use(cors());
 
-app.get('/api/v1/books', (request, response) => {
-  client.query(`SELECT book_id, title, author, image_url, isbn FROM books;`)
-    .then(results => response.send(results.rows))
+app.get('/books', (req, res) => {
+  client.query(`SELECT * FROM books;`)
+    .then(results => res.send(results.rows))
     .catch(console.error);
 });
+
+// app.get('/api/v1/books', (request, response) => {
+//   client.query(`SELECT book_id, title, author, image_url, isbn FROM books;`)
+//     .then(results => response.send(results.rows))
+//     .catch(console.error);
+// });
 
 // Temporarily abandoned code for viewing a single book
 // app.get('/books/:id', function(request, response) {
