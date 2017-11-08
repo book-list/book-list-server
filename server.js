@@ -25,11 +25,11 @@ app.get('/books', (req, res) => {
 
 app.get('*', (req, res) => res.redirect(CLIENT_URL));
 
-app.post('/books', bodyParser, (req, res) => {
+app.post('/books/add', bodyParser, (req, res) => {
   let {title, author, isbn, image_url, description} = req.body;
 
   client.query(`
-      INSERT INTO books(title, author, isbn, image_url, description) VALUES($1, $2, $3, $4, $5)`,
+      INSERT INTO books(title, author, isbn, image_url, description) VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`,
     [title, author, isbn, image_url, description]
   )
     .then(res => res.sendStatus(201))
