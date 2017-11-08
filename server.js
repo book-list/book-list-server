@@ -14,13 +14,51 @@ client.on('error', err => console.error(err));
 
 app.use(cors());
 
-app.get('/books', (req, res) => {
-  client.query(`SELECT * FROM books;`)
-    .then(results => res.send(results.rows))
+app.get('/api/v1/books', (request, response) => {
+  client.query(`SELECT book_id, title, author, image_url, isbn FROM books;`)
+    .then(results => response.send(results.rows))
     .catch(console.error);
 });
 
+// Temporarily abandoned code for viewing a single book
+// app.get('/books/:id', function(request, response) {
+//   client.query(
+//     `SELECT * FROM books
+//     WHERE id = $1`,
+//     [request.body.author,
+//       request.body.title,
+//       request.body.isbn,
+//       request.body.image_url,
+//       request.body.description,
+//       request.params.id]
+//   )
+//     .then(() => {
+//       response.send('Book Grabbed');
+//     })
+//     .catch(err => {
+//       console.error(err);
+//     })
+// });
+
 app.get('*', (req, res) => res.redirect(CLIENT_URL));
+
+app.post('/api/v1/books', (req, res) => {
+  client.query(
+    `INSERT INTO
+    books(author, title, isbn, image_url, description)
+    VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`,
+    [
+      req.body.author,
+      req.body.title,
+      req.body.isbn,
+      req.body.image_url,
+      req.body.description
+    ],
+    function(err) {
+      if (err) console.error(err);
+      res.send('insert complete');
+    });
+});
 
 app.listen(PORT, () => console.log(`Listening on port: ${PORT}`));
 
