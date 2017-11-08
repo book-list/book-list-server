@@ -3,7 +3,7 @@
 const express = require('express');
 const cors = require('cors');
 const pg = require('pg');
-const fs = require('fs');
+// const fs = require('fs');
 const bodyParser = require('body-parser');
 
 const app = express();
@@ -23,44 +23,17 @@ app.get('/books', (req, res) => {
     .catch(console.error);
 });
 
-// Temporarily abandoned code for viewing a single book
-// app.get('/books/:id', function(request, response) {
-//   client.query(
-//     `SELECT * FROM books
-//     WHERE id = $1`,
-//     [request.body.author,
-//       request.body.title,
-//       request.body.isbn,
-//       request.body.image_url,
-//       request.body.description,
-//       request.params.id]
-//   )
-//     .then(() => {
-//       response.send('Book Grabbed');
-//     })
-//     .catch(err => {
-//       console.error(err);
-//     })
-// });
-
 app.get('*', (req, res) => res.redirect(CLIENT_URL));
 
-app.post('/books', (req, res) => {
-  client.query(
-    `INSERT INTO
-    books(author, title, isbn, image_url, description)
-    VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`,
-    [
-      req.body.author,
-      req.body.title,
-      req.body.isbn,
-      req.body.image_url,
-      req.body.description
-    ],
-    function(err) {
-      if (err) console.error(err);
-      res.send('insert complete');
-    });
+app.post('/books/add', bodyParser, (req, res) => {
+  let {title, author, isbn, image_url, description} = req.body;
+
+  client.query(`
+      INSERT INTO books(title, author, isbn, image_url, description) VALUES($1, $2, $3, $4, $5)`,
+    [title, author, isbn, image_url, description]
+  )
+    .then(res => res.sendStatus(201))
+    .catch(console.error);
 });
 
 app.listen(PORT, () => console.log(`Listening on port: ${PORT}`));
