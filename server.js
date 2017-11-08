@@ -42,23 +42,23 @@ app.get('/api/v1/books', (request, response) => {
 
 app.get('*', (req, res) => res.redirect(CLIENT_URL));
 
-app.post('/api/v1/books', (req, res) => {
-  client.query(
-    `INSERT INTO
-    books(author, title, isbn, image_url, description)
-    VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`,
-    [
-      req.body.author,
-      req.body.title,
-      req.body.isbn,
-      req.body.image_url,
-      req.body.description
-    ],
-    function(err) {
-      if (err) console.error(err);
-      res.send('insert complete');
-    });
-});
+// app.post('/api/v1/books', (req, res) => {
+//   client.query(
+//     `INSERT INTO
+//     books(author, title, isbn, image_url, description)
+//     VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`,
+//     [
+//       req.body.author,
+//       req.body.title,
+//       req.body.isbn,
+//       req.body.image_url,
+//       req.body.description
+//     ],
+//     function(err) {
+//       if (err) console.error(err);
+//       res.send('insert complete');
+//     });
+// });
 
 app.listen(PORT, () => console.log(`Listening on port: ${PORT}`));
 
