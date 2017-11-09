@@ -17,6 +17,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+app.get('/test', (req, res) => res.send('hello world'))
+
 app.get('/books', (req, res) => {
   client.query(`SELECT * FROM books;`)
     .then(results => res.send(results.rows))
@@ -25,14 +27,16 @@ app.get('/books', (req, res) => {
 
 app.get('*', (req, res) => res.redirect(CLIENT_URL));
 
-app.post('/books/add', bodyParser, (req, res) => {
+
+//This is supposed to add a new book to the database, but something along that route is not working. Maybe our database isn't set up properly, I don't know.
+app.post('/api/v1/books', bodyParser, (req, res) => {
   let {title, author, isbn, image_url, description} = req.body;
 
   client.query(`
       INSERT INTO books(title, author, isbn, image_url, description) VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`,
     [title, author, isbn, image_url, description]
   )
-    .then(res => res.sendStatus(201))
+    .then(res.sendStatus(201))
     .catch(console.error);
 });
 
